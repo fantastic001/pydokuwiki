@@ -43,7 +43,7 @@ class HTMLParser(Parser):
 	def onCodeEnd(self): 
 		self.output += "</code>\n"
 	def onParagraphStart(self): 
-		self.output += "<p>\n"
+		self.output += "<p>"
 	def onParagraphEnd(self): 
 		self.output += "</p>\n"
 	def onText(self, text):
