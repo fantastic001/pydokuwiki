@@ -66,7 +66,10 @@ class HTMLParser(Parser):
 			elif element.getMode() == LineElement.Mode.UNDERLINE and underline: 
 				self.output += "</u>"
 			elif element.getMode() == LineElement.Mode.LINK: 
-				self.output += "<a href='" + element.getURL() + ">" + element.getTitle() + "</a>"
+				link_title = element.getTitle() 
+				if link_title == "" or link_title == None: 
+					link_title = element.getURL()
+				self.output += "<a href='" + element.getURL() + "'>" + link_title + "</a>"
 			else: 
 				raise WikiSyntaxError()
 	def onDocumentEnd(self): 

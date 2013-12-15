@@ -120,6 +120,11 @@ class TestLineElement(unittest.TestCase):
 		self.assertEqual(e.getMode(), LineElement.Mode.LINK)
 		self.assertEqual(e.getURL(), "www.google.com")
 		self.assertEqual(e.getTitle(), "google")
+		
+		e = LineElement("[[www.google.com]]")
+		self.assertEqual(e.getMode(), LineElement.Mode.LINK)
+		self.assertEqual(e.getURL(), "www.google.com")
+		self.assertEqual(e.getTitle(), "")
 # Run unittest 
 unittest.main()
 	
