@@ -20,14 +20,9 @@ def html_encode(text):
 
 class HTMLParser(Parser): 
 	def onDocumentStart(self): 
-		self.output = """
-		<html>
-		<head>
-		<title>WIKI Page</title>
-		</head>
-		<body>
-
-		"""
+		self.output = "<html>\n<head>\n<title>WIKI Page</title>\n"
+		self.output += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n'
+		self.output += "</head>\n<body>\n"
 	def onHeading(self, level, text):
 		self.output += "<h" + str(7 - level) + ">" + text + "</h" + str(7 - level) + ">\n"
 	def onListStart(self, mode): 
