@@ -54,17 +54,23 @@ class HTMLParser(Parser):
 			if element.getMode() == LineElement.Mode.NORMAL: 
 				self.output += e 
 			elif element.getMode() == LineElement.Mode.ITALIC and not italic: 
+				italic = True
 				self.output += "<i>"
 			elif element.getMode() == LineElement.Mode.ITALIC and italic: 
 				self.output += "</i>"
+				italic = False 
 			elif element.getMode() == LineElement.Mode.BOLD and not bold: 
+				bold = True
 				self.output += "<strong>"
 			elif element.getMode() == LineElement.Mode.BOLD and bold:
 				self.output += "</strong>"
+				bold = False 
 			elif element.getMode() == LineElement.Mode.UNDERLINE and not underline: 
+				underline = True
 				self.output += "<u>"
 			elif element.getMode() == LineElement.Mode.UNDERLINE and underline: 
 				self.output += "</u>"
+				underline = False
 			elif element.getMode() == LineElement.Mode.LINK: 
 				link_title = element.getTitle() 
 				if link_title == "" or link_title == None: 
