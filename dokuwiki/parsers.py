@@ -154,6 +154,15 @@ class Parser(object):
 
 		if hm and mode == 0: 
 			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
+			self.mode = 0
+		elif hm and mode == 3: 
+			self.onParagraphEnd
+			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
+			self.mode = 0
+		elif hm and mode == 1: 
+			self.onListEnd()
+			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
+			self.mode = 0
 		elif lm and mode == 0: 
 			self.mode = 1 
 			self.onListStart(0)
