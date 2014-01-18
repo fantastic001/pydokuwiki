@@ -134,9 +134,9 @@ class Parser(object):
 
 		# RE patterns 
 		self.heading = re.compile(r"^ *(=+)([^=]+)=+ *$")
-		self.list_item = re.compile(r"^  +(\*|-) (.*)$")
+		self.list_item = re.compile(r"^(	+|  +)(\*|-) (.*)$")
 		self.code = re.compile(r"^(<code>|</code>) *$")
-		self.code_item = re.compile(r"^  +(.*)$")
+		self.code_item = re.compile(r"^(	|  +)(.*)$")
 		self.paragraph_break = re.compile(r"^ *$")
 		
 		self.onDocumentStart()
@@ -151,79 +151,103 @@ class Parser(object):
 		pm = self.paragraph_break.match(line)
 		
 		mode = self.mode
+		
+		#print line, 
 
 		if hm and mode == 0: 
+			#print "h->0"
 			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
 			self.mode = 0
 		elif hm and mode == 3: 
+			#print "3->h"
 			self.onParagraphEnd
 			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
 			self.mode = 0
-		elif hm and mode == 1: 
+		elif hm and mode == 1:
+			#print "1->h"
 			self.onListEnd()
 			self.onHeading(countChars(hm.group(1), "="), hm.group(2))
 			self.mode = 0
 		elif lm and mode == 0: 
+			#print "0->1"
 			self.mode = 1 
 			self.onListStart(0)
-			self.onListItem(0, lm.group(2))
+			self.onListItem(0, lm.group(3))
 		elif lm and mode == 3: 
+			#print "3->1"
 			self.mode = 1
 			self.onParagraphEnd()
 			self.onListStart(0)
-			self.onListItem(0, lm.group(2))
+			self.onListItem(0, lm.group(3))
 		elif lm and mode == 1: 
-			self.onListItem(0, lm.group(2))
+			self.onListItem(0, lm.group(3))
 		elif cm and mode != 4 and cm.group(1) != "</code>": 
 			self.mode = 4
 			if mode == 3: 
+				#print "3->4"
 				self.onParagraphEnd()
 			elif mode == 1: 
+				#print "1->2"
 				self.onListEnd()
 			self.onCodeStart("", "") 
 		elif cm and mode == 4 and cm.group(1) == "</code>": 
+			#print "4->0"
 			self.mode = 0 
 			self.onCodeEnd()
 		elif cim and mode == 0:
+			#print "0->2"
+			#print "item matched"
 			self.mode = 2
 			self.onCodeStart("", "")
-			self.onCode(cim.group(1))
+			self.onCode(cim.group(2))
 		elif cim and mode == 1: 
+			#print "1->2"
+			#print "item matched"
 			self.mode = 2 
 			self.onListEnd()
 			self.onCodeStart("", "") 
-			self.onCode(cim.group(1))
+			self.onCode(cim.group(2))
 		elif cim and mode == 3: 
+			#print "3->2"
+			#print "item matched"
 			self.mode = 2 
 			self.onParagraphEnd()
 			self.onCodeStart("", "")
-			self.onCode(cim.group(1))
+			self.onCode(cim.group(2))
+		elif cim and mode == 2: 
+			#print "item matched"
+			self.onCode(cim.group(2))
 		elif pm and mode == 1: 
+			#print "1->0"
 			self.mode = 0 
 			self.onListEnd()
 		elif pm and mode == 2: 
+			#print "2->0"
 			self.mode = 0 
 			self.onCodeEnd()
 		elif pm and mode == 3: 
+			#print "3-0"
 			self.mode = 0
 			self.onParagraphEnd()
 		elif mode == 0: 
+			#print "0->3"
 			self.mode = 3
 			self.onParagraphStart()
 			self.onText(line)
 		elif mode == 1: 
+			#print "1->3"
 			self.mode = 3 
 			self.onListEnd()
 			self.onParagraphStart()
 			self.onText(line)
-		elif mode == 2 and cim: 
-			self.onCode(cim.group(1))
 		elif mode == 2 and not cim: 
+			#print "2->3"
 			self.mode = 3 
 			self.onCodeEnd()
 			self.onParagraphStart()
 			self.onText(line)
 		elif mode == 4: 
+			#print "item matched"
 			self.onCode(line)
 		else: 
 			self.onText(line)
