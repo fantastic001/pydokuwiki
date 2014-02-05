@@ -30,11 +30,11 @@ class HTMLParser(Parser):
 	def onListItem(self, level, text): 
 		self.output += "<li>" + text + "</li>\n"
 	def onCodeStart(self, language, filename): 
-		self.output += "<code>\n"
+		self.output += "<pre>\n"
 	def onCode(self, text): 
 		self.output += text
 	def onCodeEnd(self): 
-		self.output += "</code>\n"
+		self.output += "</pre>\n"
 	def onParagraphStart(self): 
 		self.output += "<p>"
 	def onParagraphEnd(self): 
