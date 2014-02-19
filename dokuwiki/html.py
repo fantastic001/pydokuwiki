@@ -32,7 +32,7 @@ class HTMLParser(Parser):
 	def onCodeStart(self, language, filename): 
 		self.output += "<pre>\n"
 	def onCode(self, text): 
-		self.output += text
+		self.output += text + "\n"
 	def onCodeEnd(self): 
 		self.output += "</pre>\n"
 	def onParagraphStart(self): 
