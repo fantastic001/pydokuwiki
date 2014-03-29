@@ -250,8 +250,7 @@ class Parser(object):
 			#print "item matched"
 			self.onCode(line)
 		else: 
-			self.onText(line)
-	
+	                self.onText(line)
 	def finish(self): 
 		if self.mode == 3: 
 			self.mode = 0 

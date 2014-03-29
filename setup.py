@@ -7,11 +7,12 @@ setup(
 	author_email = "stefan@lugons.org",
 	description = "Python module and scripts for manipulating dokuwiki formated text (seen in dokuwiki's wiki pages etc).",
 	keywords = "wiki dokuwiki text parsing",
-	entry_points = {
-		'console_scripts': [
-			"dokuwiki2html = dokuwiki.dokuwiki2html:main", 
-		]
-	}
-	)
+	#entry_points = {
+	#	'console_scripts': [
+	#		"dokuwiki2html = dokuwiki.dokuwiki2html:main", 
+	#	]
+	#}
+	scripts = ["./dokuwiki2html"]
+)
 
 
