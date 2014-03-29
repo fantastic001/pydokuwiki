@@ -70,6 +70,9 @@ class TestParser(unittest.TestCase):
 		p = DummyParser() 
 		p.parse("===HI===") 
 		self.assertEqual((p.text, p.level), ("HI", 3))
+
+		p.parse("===P=NP===")
+		self.assertEqual((p.text, p.level), ("P=NP", 3))
 	def test_transitions(self):
 		self.p.parse("  * item1") 
 		self.assertEqual((self.p.m, self.p.text), (1, "item1"))

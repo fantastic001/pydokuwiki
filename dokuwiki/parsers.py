@@ -133,7 +133,7 @@ class Parser(object):
 		self.code_language = "" # for later usage 
 
 		# RE patterns 
-		self.heading = re.compile(r"^ *(=+)([^=]+)=+ *$")
+		self.heading = re.compile(r"^ *(======|=====|====|===|==|=)(.+[^=])(======|=====|====|===|==|=) *$")
 		self.list_item = re.compile(r"^(	+|  +)(\*|-) (.*)$")
 		self.code = re.compile(r"^(<code>|</code>) *$")
 		self.code_item = re.compile(r"^(	|  +)(.*)$")
