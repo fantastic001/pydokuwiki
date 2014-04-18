@@ -4,9 +4,11 @@ from dokuwiki.elements import *
 
 import unittest 
 
+
+
 class TestLineParser(unittest.TestCase): 
 	def setUp(self): 
-		self.parser = LineParser()
+		self.parser = LineSegmenter()
 
 	def test_normal(self): 
 		self.assertEqual(self.parser.parse("foo bar"), ["foo bar"])

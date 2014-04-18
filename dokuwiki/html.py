@@ -18,6 +18,29 @@ def html_encode(text):
 		new = new.replace(e, entities[e]) 
 	return new
 
+class HTMLLIneParser(LineParser): 
+	
+	def onStart(self): 
+		self.output = ""
+	def onNormal(self, text): 
+		self.output += text
+	def onItalicStart(self):
+		self.output += "<i>"
+	def onItalicEnd(self): 
+		self.output += "</i>"
+	def onBoldStart(self): 
+		self.output += "<strong>"
+	def onBoldEnd(self):
+		self.output += "</strong>"
+	def onUnderlineStart(self): 
+		self.output += "<u>"
+	def onUnderlineEnd(self): 
+		self.output += "</u>"
+	def onLink(self, url, title): 
+		self.output += "<a href='" + url + "'>" + title + "</a>"
+	def getOutput(self): 
+		return self.output
+
 class HTMLParser(Parser): 
 	def onDocumentStart(self): 
 		self.output = "<body>\n"
@@ -40,42 +63,9 @@ class HTMLParser(Parser):
 	def onParagraphEnd(self): 
 		self.output += "</p>\n"
 	def onText(self, text):
-		bold = False
-		italic = False
-		underline = False
-
 		t = html_encode(text) # encode text for HTML 
-		l = LineParser()
-		t = l.prepare(t) 
-		for e in l.parse(t): 
-			element = LineElement(e) 
-			if element.getMode() == LineElement.Mode.NORMAL: 
-				self.output += e 
-			elif element.getMode() == LineElement.Mode.ITALIC and not italic: 
-				italic = True
-				self.output += "<i>"
-			elif element.getMode() == LineElement.Mode.ITALIC and italic: 
-				self.output += "</i>"
-				italic = False 
-			elif element.getMode() == LineElement.Mode.BOLD and not bold: 
-				bold = True
-				self.output += "<strong>"
-			elif element.getMode() == LineElement.Mode.BOLD and bold:
-				self.output += "</strong>"
-				bold = False 
-			elif element.getMode() == LineElement.Mode.UNDERLINE and not underline: 
-				underline = True
-				self.output += "<u>"
-			elif element.getMode() == LineElement.Mode.UNDERLINE and underline: 
-				self.output += "</u>"
-				underline = False
-			elif element.getMode() == LineElement.Mode.LINK: 
-				link_title = element.getTitle() 
-				if link_title == "" or link_title == None: 
-					link_title = element.getURL()
-				self.output += "<a href='" + element.getURL() + "'>" + link_title + "</a>"
-			else: 
-				raise WikiSyntaxError()
+		l = LineParser(t)
+		output += l.getOutput()
 	def onDocumentEnd(self): 
 		self.output += "</body></html>"
 	

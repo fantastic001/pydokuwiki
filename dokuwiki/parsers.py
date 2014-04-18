@@ -1,14 +1,13 @@
 
 import re 
 
+from .elements import LineElement
+
 from .util import countChars
 
-def WikiSyntaxError(Exception):
-	"""
-	Exception which is raised if syntax error was detected
-	"""
 
-class LineParser(object): 
+
+class LineSegmenter(object): 
 	
 	def __init__(self, line=""): 
 		"""
@@ -80,7 +79,9 @@ class LineParser(object):
 				elements.append(current)
 				state = 0
 				current = ""
-			else: 
+			else:
+				if token in "/_*": 
+					current += token 
 				current = current + c
 				token = ""
 				if state > 0: state = 0
@@ -88,6 +89,61 @@ class LineParser(object):
 			elements.append(current)
 		self.elements = elements 
 		return elements
+
+def WikiSyntaxError(Exception):
+	"""
+	Exception which is raised if syntax error was detected
+	"""
+
+
+class LineParser(object): 
+	def __init__(self, line): 
+		self.onStart()
+		
+		bold = False
+		italic = False
+		underline = False
+
+		l = LineSegmenter()
+		t = l.prepare(t) 
+		for e in l.parse(t): 
+			element = LineElement(e) 
+			if element.getMode() == LineElement.Mode.NORMAL: 
+				self.onNormal(e)
+			elif element.getMode() == LineElement.Mode.ITALIC and not italic: 
+				italic = True
+				self.onItalicStart()
+			elif element.getMode() == LineElement.Mode.ITALIC and italic: 
+				self.output += "</i>"
+				self.onItalicEnd()
+			elif element.getMode() == LineElement.Mode.BOLD and not bold: 
+				bold = True
+				self.onBoldStart()
+			elif element.getMode() == LineElement.Mode.BOLD and bold:
+				bold = False 
+				self.onBoldEnd()
+			elif element.getMode() == LineElement.Mode.UNDERLINE and not underline: 
+				underline = True
+				self.onUnderlineStart()
+			elif element.getMode() == LineElement.Mode.UNDERLINE and underline: 
+				underline = False
+				self.onUnderlineEnd()
+			elif element.getMode() == LineElement.Mode.LINK: 
+				link_title = element.getTitle() 
+				if link_title == "" or link_title == None: 
+					link_title = element.getURL()
+				self.onLink(element.getURL(), link_title)
+			else: 
+				raise WikiSyntaxError()
+	def onStart(self): pass
+	def onNormal(self, text): pass
+	def onItalicStart(self): pass
+	def onItalicEnd(self): pass
+	def onBoldStart(self): pass
+	def onBoldEnd(self): pass
+	def onUnderlineStart(self): pass
+	def onUnderlineEnd(self):pass 
+	def onLink(self, url, title): pass
 
 class Parser(object): 
 	"""
