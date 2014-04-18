@@ -108,7 +108,7 @@ class LineParser(object):
 		underline = False
 
 		l = LineSegmenter()
-		t = l.prepare(t) 
+		t = l.prepare(line) 
 		for e in l.parse(t): 
 			element = LineElement(e) 
 			if element.getMode() == LineElement.Mode.NORMAL: 
