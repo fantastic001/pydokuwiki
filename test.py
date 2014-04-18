@@ -6,7 +6,7 @@ import unittest
 
 
 
-class TestLineParser(unittest.TestCase): 
+class TestLineSegmenter(unittest.TestCase): 
 	def setUp(self): 
 		self.parser = LineSegmenter()
 
@@ -28,6 +28,8 @@ class TestLineParser(unittest.TestCase):
 
 	def test_bold_italic_underline(self): 
 		self.assertEqual(self.parser.parse("**//__foo bar__//**"), ["**", "//", "__", "foo bar", "__", "//", "**"])
+		self.assertEqual(self.parser.parse("**_**"), ["**", "_", "**"])
+		self.assertEqual(self.parser.parse("**  _**"), ["**", "  _", "**"])
 	
 	def test_links(self): 
 		self.assertEqual(self.parser.parse("[[http://www.google.com|This Link points to google]]"), ["[[http://www.google.com|This Link points to google]]"])
