@@ -117,6 +117,7 @@ class LineParser(object):
 				italic = True
 				self.onItalicStart()
 			elif element.getMode() == LineElement.Mode.ITALIC and italic: 
+				italic = False
 				self.onItalicEnd()
 			elif element.getMode() == LineElement.Mode.BOLD and not bold: 
 				bold = True

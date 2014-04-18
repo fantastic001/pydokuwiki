@@ -42,6 +42,32 @@ class TestLineSegmenter(unittest.TestCase):
 		self.assertEqual(self.parser.prepare("[[link]] http://www.google.com"), "[[link]] [[http://www.google.com]]")
 		self.assertEqual(self.parser.prepare("[[ http://www.google.com ]]"), "[[ http://www.google.com ]]")
 
+class DummyLineParser(LineParser): 
+	def onStart(self): 
+		self.a = []
+	def onNormal(self, text): 
+		self.a.append(text)
+
+class TestLineSegmenter(unittest.TestCase): 
+	
+	def test_normal(self): 
+		self.assertEqual(DummyLineParser("hi").a, ["hi"])
+		self.assertEqual(DummyLineParser("hi, i'm John").a, ["hi, i'm John"])
+	
+	def test_italic(self): 
+		self.assertEqual(DummyLineParser("//hi//").a, ["hi"])
+		self.assertEqual(DummyLineParser("//hi// hihi").a, ["hi", " hihi"])
+		self.assertEqual(DummyLineParser("//a// b //c//").a, ["a", " b ", "c"])
+	
+	def test_bold(self): 
+		self.assertEqual(DummyLineParser("**hi**").a, ["hi"])
+		self.assertEqual(DummyLineParser("**hi** hihi").a, ["hi", " hihi"])
+		self.assertEqual(DummyLineParser("**a** b **c**").a, ["a", " b ", "c"])
+	
+	def test_underline(self): 
+		self.assertEqual(DummyLineParser("__hi__").a, ["hi"])
+		self.assertEqual(DummyLineParser("__hi__ hihi").a, ["hi", " hihi"])
+		self.assertEqual(DummyLineParser("__a__ b __c__").a, ["a", " b ", "c"])
 
 class DummyParser(Parser): 
 	def onDocumentStart(self): 
