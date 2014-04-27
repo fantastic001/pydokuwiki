@@ -65,7 +65,7 @@ class HTMLParser(Parser):
 	def onText(self, text):
 		t = html_encode(text) # encode text for HTML 
 		l = LineParser(t)
-		output += l.getOutput()
+		self.output += l.getOutput()
 	def onDocumentEnd(self): 
 		self.output += "</body></html>"
 	
