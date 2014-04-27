@@ -18,7 +18,7 @@ def html_encode(text):
 		new = new.replace(e, entities[e]) 
 	return new
 
-class HTMLLIneParser(LineParser): 
+class HTMLLineParser(LineParser): 
 	
 	def onStart(self): 
 		self.output = ""
@@ -64,7 +64,7 @@ class HTMLParser(Parser):
 		self.output += "</p>\n"
 	def onText(self, text):
 		t = html_encode(text) # encode text for HTML 
-		l = LineParser(t)
+		l = HTMLLineParser(t)
 		self.output += l.getOutput()
 	def onDocumentEnd(self): 
 		self.output += "</body></html>"
