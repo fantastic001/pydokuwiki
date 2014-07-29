@@ -33,6 +33,9 @@ class TestLineSegmenter(unittest.TestCase):
 	
 	def test_links(self): 
 		self.assertEqual(self.parser.parse("[[http://www.google.com|This Link points to google]]"), ["[[http://www.google.com|This Link points to google]]"])
+
+	def test_images(self): 
+		self.assertEqual(self.parser.parse("{{img.png}}"), ["{{img.png}}"])
 	
 	def test_prepare(self): 
 		self.assertEqual(self.parser.prepare("http://www.google.com"), "[[http://www.google.com]]")
@@ -48,26 +51,6 @@ class DummyLineParser(LineParser):
 	def onNormal(self, text): 
 		self.a.append(text)
 
-class TestLineSegmenter(unittest.TestCase): 
-	
-	def test_normal(self): 
-		self.assertEqual(DummyLineParser("hi").a, ["hi"])
-		self.assertEqual(DummyLineParser("hi, i'm John").a, ["hi, i'm John"])
-	
-	def test_italic(self): 
-		self.assertEqual(DummyLineParser("//hi//").a, ["hi"])
-		self.assertEqual(DummyLineParser("//hi// hihi").a, ["hi", " hihi"])
-		self.assertEqual(DummyLineParser("//a// b //c//").a, ["a", " b ", "c"])
-	
-	def test_bold(self): 
-		self.assertEqual(DummyLineParser("**hi**").a, ["hi"])
-		self.assertEqual(DummyLineParser("**hi** hihi").a, ["hi", " hihi"])
-		self.assertEqual(DummyLineParser("**a** b **c**").a, ["a", " b ", "c"])
-	
-	def test_underline(self): 
-		self.assertEqual(DummyLineParser("__hi__").a, ["hi"])
-		self.assertEqual(DummyLineParser("__hi__ hihi").a, ["hi", " hihi"])
-		self.assertEqual(DummyLineParser("__a__ b __c__").a, ["a", " b ", "c"])
 
 class DummyParser(Parser): 
 	def onDocumentStart(self): 
@@ -159,6 +142,10 @@ class TestLineElement(unittest.TestCase):
 		self.assertEqual(e.getMode(), LineElement.Mode.LINK)
 		self.assertEqual(e.getURL(), "www.google.com")
 		self.assertEqual(e.getTitle(), "")
+		
+		e = LineElement("{{img.png}}")
+		self.assertEqual(e.getMode(), LineElement.Mode.IMAGE)
+		self.assertEqual(e.getParams(), "img.png")
 # Run unittest 
 unittest.main()
 	

@@ -38,6 +38,8 @@ class HTMLLineParser(LineParser):
 		self.output += "</u>"
 	def onLink(self, url, title): 
 		self.output += "<a href='" + url + "'>" + title + "</a>"
+	def onImage(self, params):	
+		self.output += params
 	def getOutput(self): 
 		return self.output
 

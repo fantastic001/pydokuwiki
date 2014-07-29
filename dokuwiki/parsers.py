@@ -49,6 +49,8 @@ class LineSegmenter(object):
 		# 	2: 	Second token found 
 		# 	-1: 	Link state 
 		# 	-2: 	End link token found 
+		#	-3	start image token 
+		#	-4	end image token
 		elements = []
 		if line == "" or line == None: 
 			line = self.line
@@ -58,7 +60,7 @@ class LineSegmenter(object):
 		token = ""
 		state = 0
 		for c in line: 
-			if c in "/*_[" and state == 0: 
+			if c in "/*_[{" and state == 0: 
 				state = 1
 				token = c 
 			elif c == token and state == 1: 
@@ -68,6 +70,11 @@ class LineSegmenter(object):
 					current = "[["
 					state = -1
 					continue
+				if token == "{": 
+					current = "{{"
+					state = -3
+					continue
+
 				elements.append(token + token) 
 				current = ""
 				token = ""
@@ -78,6 +85,14 @@ class LineSegmenter(object):
 				state = -2 
 				current = current + c 
 			elif c == "]" and state == -2: 
+				current = current + c 
+				elements.append(current)
+				state = 0
+				current = ""
+			elif c == "}" and state == -3: 
+				state = -4 
+				current = current + c 
+			elif c == "}" and state == -4: 
 				current = current + c 
 				elements.append(current)
 				state = 0
@@ -136,8 +151,10 @@ class LineParser(object):
 				if link_title == "" or link_title == None: 
 					link_title = element.getURL()
 				self.onLink(element.getURL(), link_title)
+			elif element.getMode() == LineElement.Mode.IMAGE:
+				self.onImage(element.getParams())
 			else: 
-				raise WikiSyntaxError()
+				raise WikiSyntaxError("Syntax error")
 	def onStart(self): pass
 	def onNormal(self, text): pass
 	def onItalicStart(self): pass
@@ -147,6 +164,7 @@ class LineParser(object):
 	def onUnderlineStart(self): pass
 	def onUnderlineEnd(self):pass 
 	def onLink(self, url, title): pass
+	def onImage(self, params): pass
 
 class Parser(object): 
 	"""

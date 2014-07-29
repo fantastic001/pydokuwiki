@@ -4,7 +4,7 @@ import re
 class LineElement(object): 
 	
 	class Mode(object): 
-		ITALIC, BOLD, UNDERLINE, LINK, NORMAL = range(5)
+		ITALIC, BOLD, UNDERLINE, LINK, NORMAL, IMAGE = range(6)
 
 	def __init__(self, e): 
 		self.element = e 
@@ -13,6 +13,7 @@ class LineElement(object):
 		underline = re.compile(r"^__$")
 		bold = re.compile(r"^\*\*$")
 		link = re.compile("^\[\[([^|]+)\|?(.*)\]\]$")
+		img = re.compile("^{{(.*)}}$")
 
 		if italic.match(e): 
 			self.mode = LineElement.Mode.ITALIC 
@@ -25,6 +26,11 @@ class LineElement(object):
 			self.url = match.group(1) 
 			self.desc = match.group(2)
 			self.mode = LineElement.Mode.LINK
+		elif img.match(e): 
+			match = img.match(e) 
+			self.params = match.group(1) 
+			self.mode = LineElement.Mode.IMAGE
+
 		else: 
 			self.mode = LineElement.Mode.NORMAL
 
@@ -55,5 +61,16 @@ class LineElement(object):
 		"""
 		if self.mode == LineElement.Mode.LINK: 
 			return self.desc.strip()
+		else: 
+			return None
+
+	def getParams(self): 
+		"""
+		Returns params for image elements 
+
+		returns: params - string 
+		"""
+		if self.mode == LineElement.Mode.IMAGE:
+			return self.params
 		else: 
 			return None
