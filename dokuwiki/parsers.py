@@ -78,9 +78,14 @@ class LineSegmenter(object):
 				elements.append(token + token) 
 				current = ""
 				token = ""
-			elif c in "/_*" and c != token and state == 1: 
-				current += token 
-				token = c
+			elif c != token and state == 1: 
+				if c in "/_*[{": 
+					current += token
+					token = c
+				else:
+					state = 0
+					current += token + c
+					token = ""
 			elif c == "]" and state == -1: 
 				state = -2 
 				current = current + c 

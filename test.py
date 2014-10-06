@@ -33,6 +33,9 @@ class TestLineSegmenter(unittest.TestCase):
 	
 	def test_links(self): 
 		self.assertEqual(self.parser.parse("[[http://www.google.com|This Link points to google]]"), ["[[http://www.google.com|This Link points to google]]"])
+		self.assertEqual(self.parser.parse("[1] one"), ["[1] one"])
+		self.assertEqual(self.parser.parse("[1]"), ["[1]"])
+		self.assertEqual(self.parser.parse("[]"), ["[]"])
 
 	def test_images(self): 
 		self.assertEqual(self.parser.parse("{{img.png}}"), ["{{img.png}}"])
