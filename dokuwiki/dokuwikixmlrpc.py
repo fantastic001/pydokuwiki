@@ -33,11 +33,11 @@ __version__ = '2010-07-19'
 __author__  = 'Michael Klier <chi@chimeric.de>'
 
 
-import xmlrpclib
+import xmlrpc.client
 import base64
-from urllib import urlencode
-from urllib2 import urlopen
-from urllib2 import HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlopen
+from urllib.error import HTTPError
 
 
 class DokuWikiError(Exception):
@@ -51,7 +51,7 @@ class DokuWikiXMLRPCError(DokuWikiError):
     def __init__(self, obj):
         """Initalize and call anchestor __init__()."""
         DokuWikiError.__init__(self)
-        if isinstance(obj, xmlrpclib.Fault):
+        if isinstance(obj, xmlrpc.client.Fault):
             self.page_id = obj.faultCode
             self.message = obj.faultString
         else:
@@ -111,7 +111,7 @@ class DokuWikiClient(object):
 
         try:
             self.dokuwiki_version = self._dokuwiki_version()
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -133,17 +133,17 @@ class DokuWikiClient(object):
             proto, url = self._url.split('://')
             url = proto + '://' + self._user + ':' + self._passwd + '@' + url + script
 
-        xmlrpclib.Transport.user_agent = self._user_agent
-        xmlrpclib.SafeTransport.user_agent = self._user_agent
+        xmlrpc.client.Transport.user_agent = self._user_agent
+        xmlrpc.client.SafeTransport.user_agent = self._user_agent
 
-        return xmlrpclib.ServerProxy(url)
+        return xmlrpc.client.ServerProxy(url)
 
 
     def _dokuwiki_version(self):
         """Return the DokuWiki version reported by the remote Wiki."""
         try:
             return self._xmlrpc.dokuwiki.getVersion()
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -151,7 +151,7 @@ class DokuWikiClient(object):
         """Return the supported RPC version reported by the remote Wiki."""
         try:
             return self._xmlrpc.wiki.getRPCVersionSupported()
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -167,7 +167,7 @@ class DokuWikiClient(object):
                 return self._xmlrpc.wiki.getPage(page_id)
             else:
                 return self._xmlrpc.wiki.getPageVersion(page_id, revision)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -175,7 +175,7 @@ class DokuWikiClient(object):
         """Return a list of available versions for a Wiki page."""
         try:
             return self._xmlrpc.wiki.getPageVersions(page_id, offset)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -191,7 +191,7 @@ class DokuWikiClient(object):
                 return self._xmlrpc.wiki.getPageInfo(page_id)
             else:
                 return self._xmlrpc.wiki.getPageInfoVersion(page_id, revision)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -207,7 +207,7 @@ class DokuWikiClient(object):
                 return self._xmlrpc.wiki.getPageHTML(page_id)
             else:
                 return self._xmlrpc.wiki.getPageHTMLVersion(page_id, revision)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -226,21 +226,21 @@ class DokuWikiClient(object):
             params['sum'] = summary
             params['minor'] = minor
             self._xmlrpc.wiki.putPage(page_id, text, params)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def pagelist(self, namespace):
         """Lists all pages within a given namespace."""
         try:
             return self._xmlrpc.dokuwiki.getPagelist(namespace, {})
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def all_pages(self):
         """List all pages of the remote Wiki."""
         try:
             return self._xmlrpc.wiki.getAllPages()
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -248,7 +248,7 @@ class DokuWikiClient(object):
         """Return a list of pages that link back to a Wiki page."""
         try:
             return self._xmlrpc.wiki.getBackLinks(page_id)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -256,7 +256,7 @@ class DokuWikiClient(object):
         """Return a list of links contained in a Wiki page."""
         try:
             return self._xmlrpc.wiki.listLinks(page_id)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -264,7 +264,7 @@ class DokuWikiClient(object):
         """Return the recent changes since a given timestampe (UTC)."""
         try:
             return self._xmlrpc.wiki.getRecentChanges(timestamp)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -272,14 +272,14 @@ class DokuWikiClient(object):
         """Return the permissions of a Wiki page."""
         try:
             return self._xmlrpc.wiki.aclCheck(page_id)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def get_file(self, file_id):
         """Download a file from a remote Wiki."""
         try:
             return base64.b64decode(self._xmlrpc.wiki.getAttachment(file_id))
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def put_file(self, file_id, data, overwrite = False):
@@ -287,21 +287,21 @@ class DokuWikiClient(object):
         try:
             return self._xmlrpc.wiki.putAttachment(file_id, 
                    base64.b64encode(data), {'ow': overwrite})
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def delete_file(self, file_id):
         """Delete a file from a remote wiki."""
         try:
             return self._xmlrpc.wiki.deleteAttachment(file_id)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def file_info(self, file_id):
         """Return information about a given file."""
         try:
             return self._xmlrpc.wiki.getAttachmentInfo(file_id)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def list_files(self, namespace, recursive = False, pattern = None):
@@ -313,14 +313,14 @@ class DokuWikiClient(object):
             options['pattern'] = pattern
         try:
             return self._xmlrpc.wiki.getAttachments(namespace, options)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
     def recent_media_changes(self, timestamp):
         """Return the recent media changes since a given timestampe (UTC)."""
         try:
             return self._xmlrpc.wiki.getRecentMediaChanges(timestamp)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -333,7 +333,7 @@ class DokuWikiClient(object):
         """
         try:
             return self._xmlrpc.dokuwiki.setLocks(locks)
-        except xmlrpclib.Fault, fault:
+        except xmlrpc.client.Fault as fault:
             raise DokuWikiXMLRPCError(fault)
 
 
@@ -353,10 +353,10 @@ class Callback(object):
                                                parser.values.user,
                                                parser.values.passwd,
                                                parser.values.http_basic_auth)
-            except DokuWikiXMLRPCError, error:
+            except DokuWikiXMLRPCError as error:
                 parser.error(error)
 
-            except DokuWikiURLError, error:
+            except DokuWikiURLError as error:
                 parser.error(error)
 
             self._parser = parser
@@ -364,21 +364,21 @@ class Callback(object):
 
             if data:
                 if output_format == 'plain':
-                    print data
+                    print(data)
 
                 elif output_format == 'list':
                     for item in data:
-                        print item
+                        print(item)
 
                 elif output_format == 'dict':
                     if type(data) == type([]):
                         for item in data:
-                            for key in item.keys():
-                                print '%s: %s' % (key, item[key])
-                            print "\n"
+                            for key in list(item.keys()):
+                                print('%s: %s' % (key, item[key]))
+                            print("\n")
                     else:
-                        for key in data.keys():
-                            print '%s: %s' % (key, data[key])
+                        for key in list(data.keys()):
+                            print('%s: %s' % (key, data[key]))
 
 
         else:
@@ -531,4 +531,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-# vim:ts=4:sw=4:tw=79:et:enc=utf-8:
