@@ -45,7 +45,7 @@ class HTMLLineParser(LineParser):
 
 class HTMLParser(Parser): 
 	def onDocumentStart(self): 
-		self.output = "<body>\n"
+		self.output = ""
 	def onHeading(self, level, text):
 		self.output += "<h" + str(7 - level) + ">" + text + "</h" + str(7 - level) + ">\n"
 	def onListStart(self, mode): 
@@ -69,7 +69,7 @@ class HTMLParser(Parser):
 		l = HTMLLineParser(t)
 		self.output += l.getOutput()
 	def onDocumentEnd(self): 
-		self.output += "</body></html>"
+		pass
 	
 	def getOutput(self, stylesheet=None): 
 		head = "<html>\n<head>\n<title>WIKI Page</title>\n"
@@ -77,4 +77,4 @@ class HTMLParser(Parser):
 		if stylesheet != None: 
 			head += "<style type='text/css'>\n" + stylesheet + "\n</style>\n"
 		head += "</head>\n"
-		return head + self.output
+		return head + "<body>\n" + self.output + "</body></html>"
