@@ -10,9 +10,9 @@ def html_encode(text):
 	"""
 	new = text
 	entities = {
+		"&": "&amp;",
 		">": "&gt;", 
 		"<": "&lt;", 
-		"&": "&amp;"
 	}
 	for e in entities.keys(): 
 		new = new.replace(e, entities[e]) 
