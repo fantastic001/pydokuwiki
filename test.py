@@ -19,6 +19,7 @@ class TestLineSegmenter(unittest.TestCase):
         def test_italic(self): 
                 self.assertEqual(self.parser.parse("//foo bar//"), ["//", "foo bar", "//"])
                 self.assertEqual(self.parser.parse("gps/gprs"), ["gps/gprs"])
+                self.assertEqual(self.parser.parse("//gps/gprs//"), ["//", "gps/gprs", "//"])
 
         def test_bold_italic(self): 
                 self.assertEqual(self.parser.parse("**//foo bar//**"), ["**", "//", "foo bar", "//", "**"])
