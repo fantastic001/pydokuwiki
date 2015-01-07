@@ -326,7 +326,7 @@ class Parser(object):
                         self.mode = 3
                         self._cp = ""
                         self.onParagraphStart()
-                        if line[-1] == "\n":
+                        if line.endswith("\n"):
                             line = line[:-1]
                         self._cp += line
                 elif mode == 1: 
@@ -335,7 +335,7 @@ class Parser(object):
                         self.onListEnd()
                         self._cp = ""
                         self.onParagraphStart()
-                        if line[-1] == "\n": 
+                        if line.endswith("\n"):
                             line = line[:-1]
                         self._cp += line
                 elif mode == 2 and not cim: 
@@ -344,14 +344,14 @@ class Parser(object):
                         self.onCodeEnd()
                         self._cp = ""
                         self.onParagraphStart()
-                        if line[-1] == "\n": 
+                        if line.endswith("\n"):
                             line = line[:-1]
                         self._cp += line
                 elif mode == 4: 
                         #print "item matched"
                         self.onCode(line)
                 else: 
-                        if line[-1] == "\n": 
+                        if line.endswith("\n"):
                             line = line[:-1]
                         self._cp += line
         def finish(self): 
