@@ -8,8 +8,4 @@ def countChars(s, cc):
 
 	returns: integer 
 	"""
-	count = 0 
-	for c in s: 
-		if c == cc:
-			count = count + 1 
-	return count 
+	return s.count(cc)
